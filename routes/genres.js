@@ -1,5 +1,6 @@
 const express = require('express')
 const {validate, Genre} = require('../models/genre')
+const auth = require('../middleware/auth')
 
 const route = express.Router()
 
@@ -23,7 +24,7 @@ getGenresById = () => {
 
 // === CREATE A Genre ===
 createGenre = () => {
-    route.post('/', async (req,res) => {
+    route.post('/', auth, async (req,res) => {
         const {error} = validate(req.body)
         const { body } = req
 
@@ -53,7 +54,7 @@ createGenre = () => {
 
 // === UPDATE A Genre ===
 updateGenre = () => {
-    route.put('/:id', async (req,res) => {
+    route.put('/:id', auth, async (req,res) => {
         const {error} = validate(req.body)
 
         // error ? res.status(404).send(error.details[0].message) : console.log('Validated')
@@ -78,7 +79,7 @@ updateGenre = () => {
 
 // === DELETE A Genre ===
 deleteGenre = () => {
-    route.delete('/:id', async (req,res) => {
+    route.delete('/:id', auth, async (req,res) => {
 
         const result = await Genre.findByIdAndDelete(req.params.id)
         !result

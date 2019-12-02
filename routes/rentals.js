@@ -4,20 +4,21 @@ const mongoose = require('mongoose')
 const {Movie} = require('../models/movie')
 const {Customer} = require('../models/customer')
 const {Rental, validate} = require('../models/rental')
+const auth = require('../middleware/auth')
 
 
 const route = express.Router()
 Fawn.init(mongoose)
 
 getRentals = () => {
-    route.get('/', async(req,res) => {
+    route.get('/', auth, async(req,res) => {
         const result = await Rental.find()
         res.status(200).send(result)
     })
 }
 
 createRental = () => {
-    route.post('/', async(req,res) => {
+    route.post('/', auth, async(req,res) => {
         const {error} = validate(req.body)
         if (error) { res.status(400).send(error.details[0].message) }
         else {

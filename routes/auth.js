@@ -20,14 +20,14 @@ authUser = () => {
         const { error } = validateUser(req.body)
         if (error) {return (res.status(400).send(error.details[0].message))}
 
-        let user = await User.findOne({email: req.body.email})
+        const user = await User.findOne({email: req.body.email})
         if(!user) {return res.status(400).send('User does not exist')}
 
         let validatePwd = await bcrypt.compare(req.body.password, user.password)
         if (!validatePwd) {return res.status(400).send('Invalid username or password')}
 
-        const token = jwt.sign({_id: user._id}, config.get('jwtPrivateKey'))
-
+        const token = jwt.sign({_id: user._id, isAdmin: user.isAdmin}, config.get('jwtPrivateKey'))
+        // const token = user.generateAuthToken()
         res.send(token)
     })
 }
